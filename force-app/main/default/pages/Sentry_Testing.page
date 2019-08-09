@@ -1,0 +1,5 @@
+<apex:page controller="Sentry_TestingController">
+    <apex:form >
+    	<apex:commandButton action="{!triggerCapturedException}" value="Trigger an exception!" />
+    </apex:form>
+</apex:page>

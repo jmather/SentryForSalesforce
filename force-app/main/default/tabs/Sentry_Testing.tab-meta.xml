@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>A quick tool for testing Sentry.</description>
+    <label>Sentry Testing</label>
+    <mobileReady>false</mobileReady>
+    <motif>Custom67: Gears</motif>
+    <page>Sentry_Testing</page>
+</CustomTab>
