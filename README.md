@@ -2,6 +2,16 @@
 
 ## Installation
 
+### An Unmanaged Package for installation into a production org
+
+[https://login.salesforce.com/packaging/installPackage.apexp?p0=04t2E000003VoDZQA0](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t2E000003VoDZQA0)
+
+### An Unmanaged Package for installation into a sandbox or scratch org
+
+&lt;your org url&gt;/packaging/installPackage.apexp?p0=04t2E000003VoDZQA0 
+
+### Other
+
 Upload the code with SFDX. To be expanded upon later!
 
 ## Configuration

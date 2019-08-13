@@ -12,6 +12,7 @@
     "sfdcLoginUrl": "https://login.salesforce.com",
     "sourceApiVersion": "45.0",
     "packageAliases": {
-        "SentryForSalesforce": "0Ho2E000000CaZGSA0"
+        "SentryForSalesforce": "0Ho2E000000CaZGSA0",
+        "SentryForSalesforce@0.1.0-2": "04t2E000003VoDZQA0"
     }
 }
