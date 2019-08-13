@@ -39,6 +39,6 @@ global with sharing class Sentry_ExceptionFactory {
         Sentry_Exception ex = (Sentry_Exception) Sentry_ExceptionFactory.build(Sentry_Exception.class);
         ex.setMessage('Could not instantiate given class as an exception!');
         ex.context.put('exceptionClass', exType.getName());
-        return ex;
+        throw ex;
     }
 }

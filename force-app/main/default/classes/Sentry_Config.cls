@@ -74,6 +74,9 @@ public without sharing class Sentry_Config {
     public static Boolean canSendToSentry() {
         Sentry_Active_Config__c ac = getActiveConfig();
 
+        Sentry_Log.logSentry('[Sentry_config.canSendToSentry] active config: ' + JSON.serializePretty(ac));
+        Sentry_Log.logSentry('[Sentry_config.canSendToSentry] IsIssueCreationEnabled__c: ' + JSON.serializePretty(ac.IsIssueCreationEnabled__c));
+
         if (ac.IsIssueCreationEnabled__c == null) {
             return true;
         }
