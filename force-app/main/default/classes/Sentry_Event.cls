@@ -2,7 +2,7 @@
  * Created by Jacob Mather <jmather@jmather.com> on 2019-03-25.
  */
 
-public with sharing class Sentry_Event {
+public without sharing class Sentry_Event {
     // uuid
     public String event_id;
 

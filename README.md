@@ -2,6 +2,8 @@
 
 ## Installation
 
+You only need to install this for Admins Only.
+
 ### An Unmanaged Package for installation into a production org
 
 [https://login.salesforce.com/packaging/installPackage.apexp?p0=04t2E000003VoDZQA0](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t2E000003VoDZQA0)
