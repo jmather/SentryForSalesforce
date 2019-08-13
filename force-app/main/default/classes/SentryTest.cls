@@ -13,7 +13,7 @@ public with sharing class SentryTest {
         Sentry_TestingController controller = new Sentry_TestingController();
 
         Sentry_Active_Config__c config = Sentry_Active_Config__c.getOrgDefaults();
-        config.IsIssueCreationEnabled__c = true;
+        config.IsIssueCreationDisabled__c = false;
         config.IsDebug__c = true;
         config.Sentry_Config__c = 'Test';
         config.Environment_Name__c = 'Test';
