@@ -80,7 +80,7 @@ public without sharing class Sentry_Config {
             return true;
         }
 
-        return ac.IsIssueCreationDisabled__c;
+        return ac.IsIssueCreationDisabled__c == false;
     }
 
     private static Sentry_Active_Config__c getActiveConfig() {
