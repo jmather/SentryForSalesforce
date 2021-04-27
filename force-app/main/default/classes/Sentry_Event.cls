@@ -1,7 +1,14 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-03-25.
- */
-
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-28-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-28-2021   Jheel     Added logic to send proper detailed data to Sentry with Breadcrumbs as well
+**/
 public without sharing class Sentry_Event {
     // uuid
     public String event_id;
@@ -42,6 +49,8 @@ public without sharing class Sentry_Event {
 
     public Map<String, Object> exceptionValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
 
+    public Map<String, Object> breadcrumbsValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
+
     public String messageFormatted;
 
     public String[] messageParams;
@@ -58,16 +67,31 @@ public without sharing class Sentry_Event {
     }
 
     public Sentry_Event(Exception ex) {
+        this(null, ex, null);
+    }
+
+    // Custom Method with custom issueTitle and extra messages
+    public Sentry_Event(String issueTitle, Exception ex, List<Sentry_LogMessage> lExtraMessages) {
         initialize();
 
         Sentry_Log.logSentry('Got exception: ' + ex);
         Sentry_Log.logSentry('Got stack: ' + ex.getStackTraceString());
 
-        Map<String, Object> exData = Sentry_Context.create();
-        Map<String, Object> exDataStack = Sentry_Context.create();
+        Map<String, Object> exceptionData = Sentry_Context.create();
+        Map<String, Object> exceptionDataStack = Sentry_Context.create();
 
-        exData.put('type', ex.getTypeName());
-        exData.put('message', JSON.serialize(ex.getMessage()));
+        // For setting custom title for the issue which will be created
+        if(String.isNotBlank(issueTitle))
+        {
+            exceptionData.put('type', issueTitle);
+        }
+        // Default title will be the type of exception occured.
+        else
+        {
+            exceptionData.put('type', ex.getTypeName());
+        }
+        
+        exceptionData.put('message', JSON.serialize(ex.getMessage()));
 
         List<Map<String, Object>> frames = new List<Map<String, Object>>();
 
@@ -80,29 +104,85 @@ public without sharing class Sentry_Event {
             String line = lines[i];
             Pattern p = Pattern.compile('Class\\.([^\\.]+)\\.([^:]+): line ([0-9]+), column ([0-9]+)');
             Matcher m = p.matcher(line);
-            if (m.find()) {
+            // Sample: Class.SampleClass.execute: line 36, column 1
+            if (m.find()) 
+            {
+                System.debug('@@m:--'+m);
                 frames.add(new Map<String, Object> {
                         'class' => m.group(1),
-                        'file' => m.group(1) + '.cls',
+                        'filename' => m.group(1) + '.cls',
                         'function' => m.group(1) + '.' + m.group(2) + ', line ' + m.group(3),
-                        'line' => m.group(3),
-                        'column' => m.group(4)
+                        'lineno' => Integer.valueOf(m.group(3)),
+                        'column' => Integer.valueOf(m.group(4)),
+                        'in_app'=> true,
+                        'vars' => new Map<String, Object> {
+                            'column' => m.group(4),
+                            'line' => Integer.valueOf(m.group(3)),
+                            'class'=> m.group(1),
+                            'function' => m.group(2)
+                        }
                 });
+            }
+            else
+            {
+                p = Pattern.compile('Class\\.([^\\.]+): line ([0-9]+), column ([0-9]+)');
+                m = p.matcher(line);
+                // Sample: Class.SampleClass1: line 595, column 1
+                if (m.find()) 
+                {
+                    System.debug('@@m:--'+m);
+                    frames.add(new Map<String, Object> {
+                            'class' => m.group(1),
+                            'filename' => m.group(1) + '.cls',
+                            'function' => m.group(1) /*+ '.' + m.group(2) */+ ', line ' + m.group(2),
+                            'lineno' => Integer.valueOf(m.group(2)),
+                            'column' => Integer.valueOf(m.group(3)),
+                            'in_app'=> true,
+                            'vars' => new Map<String, Object> {
+                                'column' => m.group(3),
+                                'line' => Integer.valueOf(m.group(2)),
+                                'class'=> m.group(1)
+                            }
+                    });
+                }
             }
         }
 
-        exDataStack.put('frames', frames);
-        exData.put('stacktrace', exDataStack);
+        exceptionDataStack.put('frames', frames);
+        exceptionData.put('stacktrace', exceptionDataStack);
 
-        extra.put('cause', ex.getCause());
-        extra.put('line_number', ex.getLineNumber());
+        // add "value" in exceptionData
+        exceptionData.put('value', ex.getTypeName()+' '+ex.getMessage());
+        exceptionData.put('cause', ex.getCause());
+        exceptionData.put('line_number', ex.getLineNumber());
 
-        addException(exData);
+        addException(exceptionData);
         message = ex.getMessage();
+
+        // For loop for adding extra messages in the issue
+        if(lExtraMessages != null && !lExtraMessages.isEmpty())
+        {
+            for(Sentry_LogMessage objSLogMessage: lExtraMessages)
+            {
+                Map<String, Object> extraData = Sentry_Context.create();
+                extraData.put('type', objSLogMessage.type);  
+                extraData.put('category', objSLogMessage.category);  
+                extraData.put('level', objSLogMessage.level);  
+                extraData.put('timestamp', objSLogMessage.ts.formatGmt('yyyy-MM-dd') + 'T' + objSLogMessage.ts.formatGmt('HH:mm:ss') + 'Z');  
+                extraData.put('message', objSLogMessage.message);
+                
+                // Adding extra messages
+                addbreadcrumbs(extraData);
+            }
+        }
     }
 
     private void addException(Map<String, Object> exData) {
         ((List<Map<String, Object>>)exceptionValues.get('values')).add(exData);
+    }
+
+     private void addbreadcrumbs(Map<String, Object> exData) {
+        ((List<Map<String, Object>>)breadcrumbsValues.get('values')).add(exData);
     }
 
     private void initialize() {
@@ -112,7 +192,7 @@ public without sharing class Sentry_Event {
 
         timestamp = Datetime.now().formatGmt('yyyy-MM-dd') + 'T' + Datetime.now().formatGmt('HH:mm:ss') + 'Z';
 
-        level = 'error';
+        level = Sentry_LogMessage.LEVEL_ERROR;
 
         environment = Sentry_Config.getEnvironmentName();
     }
@@ -127,6 +207,7 @@ public without sharing class Sentry_Event {
         msg.put('platform', platform);
         msg.put('level', level);
         msg.put('exception', exceptionValues);
+        msg.put('breadcrumbs', breadcrumbsValues);
         return msg;
     }
 }
