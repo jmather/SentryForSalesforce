@@ -1,13 +1,22 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-06-25.
- */
-
-public without sharing class Sentry_Config {
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global without sharing class Sentry_Config 
+{
     private static Boolean isInDebugMode = null;
     private static Sentry_Active_Config__c activeConfig;
     private static Sentry_Config__mdt config;
 
-    public static Sentry_Config__mdt getConfig() {
+    global static Sentry_Config__mdt getConfig() 
+    {
         checkDebugging();
 
         if (config == null) {
@@ -41,7 +50,8 @@ public without sharing class Sentry_Config {
         return config;
     }
 
-    public static String getEnvironmentName() {
+    global static String getEnvironmentName() 
+    {
         Sentry_Active_Config__c ac = getActiveConfig();
 
         if (String.isBlank(ac.Environment_Name__c)) {
@@ -51,11 +61,13 @@ public without sharing class Sentry_Config {
         return ac.Environment_Name__c;
     }
 
-    public static Sentry_Dsn getDsn() {
+    global static Sentry_Dsn getDsn() 
+    {
         return new Sentry_Dsn(getConfig().DSN__c);
     }
 
-    public static Boolean checkDebugging() {
+    global static Boolean checkDebugging() 
+    {
         if (isInDebugMode == null) {
             Sentry_Active_Config__c ac = getActiveConfig();
 
@@ -71,7 +83,8 @@ public without sharing class Sentry_Config {
         return isInDebugMode;
     }
 
-    public static Boolean canSendToSentry() {
+    global static Boolean canSendToSentry() 
+    {
         Sentry_Active_Config__c ac = getActiveConfig();
 
         Sentry_Log.logSentry('[Sentry_config.canSendToSentry] active config: ' + JSON.serializePretty(ac));
@@ -83,7 +96,8 @@ public without sharing class Sentry_Config {
         return ac.IsIssueCreationDisabled__c == false;
     }
 
-    private static Sentry_Active_Config__c getActiveConfig() {
+    private static Sentry_Active_Config__c getActiveConfig() 
+    {
         if (activeConfig == null) {
             activeConfig = Sentry_Active_Config__c.getOrgDefaults();
         }
@@ -91,5 +105,5 @@ public without sharing class Sentry_Config {
         return activeConfig;
     }
 
-    public class SentryConfigException extends Exception {}
+    global class SentryConfigException extends Exception {}
 }

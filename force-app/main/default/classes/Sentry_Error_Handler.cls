@@ -1,9 +1,18 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-06-25.
- */
-
-public with sharing class Sentry_Error_Handler {
-    public void run() {
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global with sharing class Sentry_Error_Handler 
+{
+    global void run() 
+    {
         List<String> errors = new List<String>();
 
         for (Sentry_Error__e e : (List<Sentry_Error__e>) Trigger.new) {
@@ -29,7 +38,8 @@ public with sharing class Sentry_Error_Handler {
     }
 
     @Future(Callout=true)
-    public static void sendErrors(List<String> errors) {
+    global static void sendErrors(List<String> errors) 
+    {
         for (String error : errors) {
             Sentry_Client.sendEventToSentry(error);
         }

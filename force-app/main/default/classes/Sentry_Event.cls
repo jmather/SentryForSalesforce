@@ -2,76 +2,83 @@
  * @description       : 
  * @author            : jmather
  * @group             : 
- * @last modified on  : 04-28-2021
+ * @last modified on  : 04-29-2021
  * @last modified by  : Jheel
  * Modifications Log 
  * Ver   Date         Author    Modification
  * 1.0   08-10-2019   jmather   Initial Version
  * 1.1   04-28-2021   Jheel     Added logic to send proper detailed data to Sentry with Breadcrumbs as well
+ * 1.2   04-29-2021   Jheel     Added global visibility for the class and required methods
+ * 1.3   04-29-2021   Jheel     Added logic not to send frames and stacktrace if it is empty and added logic to cover managed package stacktrace
 **/
-public without sharing class Sentry_Event {
+global without sharing class Sentry_Event 
+{
     // uuid
-    public String event_id;
+    global String event_id;
 
-    public String timestamp;
+    global String timestamp;
 
-    public String level = 'error';
+    global String level = 'error';
 
-    public String platform = 'salesforce';
+    global String platform = 'salesforce';
 
-    public Map<String, String> sdk = new Map<String, String> { 'name' => 'sentry.apex', 'version' => '1' };
+    global Map<String, String> sdk = new Map<String, String> { 'name' => 'sentry.apex', 'version' => '1' };
 
-    public String logger;
+    global String logger;
 
-    public String server_name;
+    global String server_name;
 
-    public String release;
+    global String release;
 
-    public String message;
+    global String message;
 
-    public String environment;
+    global String environment;
 
-    public String[] modules;
+    global String[] modules;
 
-    public Map<String, Object> request = Sentry_Context.Basic();
+    global Map<String, Object> request = Sentry_Context.Basic();
 
-    public Map<String, Object> extra = Sentry_Context.Basic();
+    global Map<String, Object> extra = Sentry_Context.Basic();
 
-    public Map<String, Object> user = Sentry_Context.User();
+    global Map<String, Object> user = Sentry_Context.User();
 
-    public Map<String, Object> contexts = Sentry_Context.OsSystem();
+    global Map<String, Object> contexts = Sentry_Context.OsSystem();
 
-    public Map<String, Object> tags = Sentry_Context.Basic();
+    global Map<String, Object> tags = Sentry_Context.Basic();
 
-    public String[] fingerprint;
+    global String[] fingerprint;
 
-    public Map<String, Object> breadcrumbs = Sentry_Context.Breadcrumbs();
+    global Map<String, Object> breadcrumbs = Sentry_Context.Breadcrumbs();
 
-    public Map<String, Object> exceptionValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
+    global Map<String, Object> exceptionValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
 
-    public Map<String, Object> breadcrumbsValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
+    global Map<String, Object> breadcrumbsValues = new Map<String, Object> { 'values' => new List<Map<String, Object>>() };
 
-    public String messageFormatted;
+    global String messageFormatted;
 
-    public String[] messageParams;
+    global String[] messageParams;
 
-    public String stacktrace;
+    global String stacktrace;
 
-    public Sentry_Event() {
+    global Sentry_Event() 
+    {
         initialize();
     }
 
-    public Sentry_Event(Sentry_Exception ex) {
+    global Sentry_Event(Sentry_Exception ex) 
+    {
         this((Exception) ex);
         System.debug('custom' + ex.getCustomStackTraceAsString());
     }
 
-    public Sentry_Event(Exception ex) {
+    global Sentry_Event(Exception ex) 
+    {
         this(null, ex, null);
     }
 
     // Custom Method with custom issueTitle and extra messages
-    public Sentry_Event(String issueTitle, Exception ex, List<Sentry_LogMessage> lExtraMessages) {
+    global Sentry_Event(String issueTitle, Exception ex, List<Sentry_LogMessage> lExtraMessages) 
+    {
         initialize();
 
         Sentry_Log.logSentry('Got exception: ' + ex);
@@ -109,18 +116,18 @@ public without sharing class Sentry_Event {
             {
                 System.debug('@@m:--'+m);
                 frames.add(new Map<String, Object> {
-                        'class' => m.group(1),
-                        'filename' => m.group(1) + '.cls',
-                        'function' => m.group(1) + '.' + m.group(2) + ', line ' + m.group(3),
-                        'lineno' => Integer.valueOf(m.group(3)),
-                        'column' => Integer.valueOf(m.group(4)),
-                        'in_app'=> true,
-                        'vars' => new Map<String, Object> {
-                            'column' => m.group(4),
-                            'line' => Integer.valueOf(m.group(3)),
-                            'class'=> m.group(1),
-                            'function' => m.group(2)
-                        }
+                    'class' => m.group(1),
+                    'filename' => m.group(1) + '.cls',
+                    'function' => m.group(1) + '.' + m.group(2) + ', line ' + m.group(3),
+                    'lineno' => Integer.valueOf(m.group(3)),
+                    'column' => Integer.valueOf(m.group(4)),
+                    'in_app'=> true,
+                    'vars' => new Map<String, Object> {
+                        'column' => m.group(4),
+                        'line' => Integer.valueOf(m.group(3)),
+                        'class'=> m.group(1),
+                        'function' => m.group(2)
+                    }
                 });
             }
             else
@@ -132,24 +139,46 @@ public without sharing class Sentry_Event {
                 {
                     System.debug('@@m:--'+m);
                     frames.add(new Map<String, Object> {
-                            'class' => m.group(1),
-                            'filename' => m.group(1) + '.cls',
-                            'function' => m.group(1) /*+ '.' + m.group(2) */+ ', line ' + m.group(2),
-                            'lineno' => Integer.valueOf(m.group(2)),
-                            'column' => Integer.valueOf(m.group(3)),
-                            'in_app'=> true,
-                            'vars' => new Map<String, Object> {
-                                'column' => m.group(3),
-                                'line' => Integer.valueOf(m.group(2)),
-                                'class'=> m.group(1)
-                            }
+                        'class' => m.group(1),
+                        'filename' => m.group(1) + '.cls',
+                        'function' => m.group(1) /*+ '.' + m.group(2) */+ ', line ' + m.group(2),
+                        'lineno' => Integer.valueOf(m.group(2)),
+                        'column' => Integer.valueOf(m.group(3)),
+                        'in_app'=> true,
+                        'vars' => new Map<String, Object> {
+                            'column' => m.group(3),
+                            'line' => Integer.valueOf(m.group(2)),
+                            'class'=> m.group(1)
+                        }
+                    });
+                }
+                // For Managed Package Exceptions. Sample: (Sentry)
+                else 
+                {
+                    frames.add(new Map<String, Object> {
+                        'function' => line,
+                        'in_app'=> true,
+                        'vars' => new Map<String, Object> {
+                            'class'=> line
+                        }
                     });
                 }
             }
         }
 
-        exceptionDataStack.put('frames', frames);
-        exceptionData.put('stacktrace', exceptionDataStack);
+        if(!frames.isEmpty())
+        {
+            exceptionDataStack.put('frames', frames);
+            exceptionData.put('stacktrace', exceptionDataStack);
+        }
+        else 
+        {
+            if(lExtraMessages == null)
+            {
+                lExtraMessages = new List<Sentry_LogMessage>();
+            }
+            lExtraMessages.add(new Sentry_LogMessage(PCH.Sentry_LogMessage.LEVEL_ERROR, ex.getMessage()+'\nStacktrace:-'+ex.getStackTraceString()));
+        }
 
         // add "value" in exceptionData
         exceptionData.put('value', ex.getTypeName()+' '+ex.getMessage());
@@ -197,7 +226,8 @@ public without sharing class Sentry_Event {
         environment = Sentry_Config.getEnvironmentName();
     }
 
-    public Map<String, Object> toMessage() {
+    global Map<String, Object> toMessage() 
+    {
         Map<String, Object> msg = Sentry_Context.create();
         msg.put('event_id', event_id);
         msg.put('environment', environment);

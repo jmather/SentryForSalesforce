@@ -1,11 +1,20 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-06-25.
- */
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global without sharing class Sentry_Environment 
+{
+    global enum InstanceType { PRODUCTION, TRIAL, SANDBOX, SCRATCH_ORG }
 
-public without sharing class Sentry_Environment {
-    public enum InstanceType { PRODUCTION, TRIAL, SANDBOX, SCRATCH_ORG }
-
-    public static String getInstanceLabel() {
+    global static String getInstanceLabel() 
+    {
         String orgUrl = Url.getOrgDomainUrl().toExternalForm();
         Sentry_Log.logSentry('[Sentry_Environment.getInstanceLabel] orgUrl: ' + orgUrl);
         List<String> protoAndRemainder = orgUrl.split('://');
@@ -27,7 +36,8 @@ public without sharing class Sentry_Environment {
         return url_fragment.split('--')[0].toLowerCase();
     }
 
-    public static InstanceType getInstanceType() {
+    global static InstanceType getInstanceType() 
+    {
         Organization org = [SELECT InstanceName, IsSandbox, TrialExpirationDate FROM Organization];
 
         if (org.IsSandbox == true && org.TrialExpirationDate == null) {

@@ -2,20 +2,23 @@
  * @description       : 
  * @author            : jmather
  * @group             : 
- * @last modified on  : 04-28-2021
+ * @last modified on  : 04-29-2021
  * @last modified by  : Jheel
  * Modifications Log 
  * Ver   Date         Author    Modification
  * 1.0   08-10-2019   jmather   Initial Version
  * 1.1   04-28-2021   Jheel     Added a method to send custom title and breadcrumbs to Sentry
+ * 1.2   04-29-2021   Jheel     Added global visibility for the class and required methods
 **/
-public without sharing class Sentry {
-    public static void record(Exception e) {
+global without sharing class Sentry 
+{
+    global static void record(Exception e) 
+    {
         Sentry_Event err = convertExceptionToError(e);
         sendEvent(err);
     }
 
-    public static void record(String issueTitle, Exception e, List<Sentry_LogMessage> lExtraMessages) 
+    global static void record(String issueTitle, Exception e, List<Sentry_LogMessage> lExtraMessages) 
     {
         Sentry_Event err = convertExceptionToError(issueTitle, e, lExtraMessages);
         sendEvent(err);
