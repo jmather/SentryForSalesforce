@@ -33,7 +33,7 @@ There is also a Custom Setting which you can use.
 3. Click "New"
 4. `Environment Name` is the name of the environment that will show up in Sentry.
 5. `Debug` turns on developer debugging for the Salesforce for Sentry internals.
-6. `Is Issue Creation Enabled` turns on actually sending errors to Sentry.
+6. `Is Issue Creation Disabled` turns off sending errors to Sentry.
 7. `Sentry Config DeveloperName` takes the DeveloperName of a `Sentry Config` entry, and uses that configuration. This makes it easy to have sentry disabled by default in cloned sandboxes. Just make a `Sentry Config` for Production, and set the `Sentry Config DeveloperName` to that in your Production environment.
 
 ## Usage
