@@ -1,11 +1,20 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-03-18.
- */
-
-public with sharing class Sentry_Client {
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global with sharing class Sentry_Client 
+{
     private static Sentry_Dsn dsn = Sentry_Config.getDsn();
 
-    public static void sendEventToSentry(String serializedEvent) {
+    global static void sendEventToSentry(String serializedEvent) 
+    {
         HttpRequest req = new HttpRequest();
 
         // you'll have to register a remote site for this url, but can probably just do a generic https://sentry.io...

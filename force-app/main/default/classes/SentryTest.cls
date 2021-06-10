@@ -2,15 +2,17 @@
  * @description       : 
  * @author            : jmather
  * @group             : 
- * @last modified on  : 04-28-2021
+ * @last modified on  : 04-29-2021
  * @last modified by  : Jheel
  * Modifications Log 
  * Ver   Date         Author    Modification
  * 1.0   08-10-2019   jmather   Initial Version
  * 1.1   04-28-2021   Jheel     Added new methods RecordwithCustomException() and RecordCustomExceptionWithoutSendingToSentry() for test class coverge
+ * 1.2   04-29-2021   Jheel     Added global visibility for the class and required methods
 **/
 @IsTest
-public with sharing class SentryTest {
+global with sharing class SentryTest 
+{
     @IsTest
     static void Record() {
         Exception ex;

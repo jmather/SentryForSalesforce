@@ -1,9 +1,17 @@
 /**
- * Created by jmather on 2019-08-12.
- */
-
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-30-2021
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
 @IsTest
-public with sharing class Sentry_ExceptionFactoryTest {
+global with sharing class Sentry_ExceptionFactoryTest 
+{
     class BasicException extends Exception {}
     class ExtendedException extends Sentry_Exception {}
 

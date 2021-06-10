@@ -1,15 +1,24 @@
 /**
- * Created by Jacob Mather <jmather@jmather.com> on 2019-03-25.
- */
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global with sharing class Sentry_Dsn 
+{
+    global String privateKey;
+    global String publicKey;
+    global String projectId;
+    global Url sentryUrl;
+    global Url url;
 
-public with sharing class Sentry_Dsn {
-    public String privateKey;
-    public String publicKey;
-    public String projectId;
-    public Url sentryUrl;
-    public Url url;
-
-    public Sentry_Dsn(String dsn) {
+    global Sentry_Dsn(String dsn) 
+    {
         url = new Url(dsn);
         this.publicKey = getPublicKey(url);
         this.privateKey = getPrivateKey(url);

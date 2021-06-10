@@ -1,10 +1,19 @@
 /**
- * Created by jmather on 2019-08-08.
- */
-
-global virtual with sharing class Sentry_Log {
-    public static Boolean debugSentry = false;
-    public static List<String> logLevels = new List<String> {
+ * @description       : 
+ * @author            : jmather
+ * @group             : 
+ * @last modified on  : 04-29-2021
+ * @last modified by  : Jheel
+ * Modifications Log 
+ * Ver   Date         Author    Modification
+ * 1.0   08-10-2019   jmather   Initial Version
+ * 1.1   04-29-2021   Jheel     Added global visibility for the class and required methods
+**/
+global virtual with sharing class Sentry_Log 
+{
+    global static Boolean debugSentry = false;
+    global static List<String> logLevels = new List<String> 
+    {
             Sentry_LogMessage.LEVEL_TRACE,
             Sentry_LogMessage.LEVEL_DEBUG,
             Sentry_LogMessage.LEVEL_INFO,
@@ -97,7 +106,8 @@ global virtual with sharing class Sentry_Log {
         logError(e.getMessage(), data);
     }
 
-    public static void showDebug(Sentry_LogMessage message) {
+    global static void showDebug(Sentry_LogMessage message) 
+    {
         System.debug(message.message);
 
         if (message.data.isEmpty()) {
